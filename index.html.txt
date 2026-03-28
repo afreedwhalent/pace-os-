@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHALENT OS — Life Operating System</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   ROOT TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg-0:        #07070d;
+  --bg-1:        #0c0c16;
+  --bg-2:        #10101c;
+  --bg-3:        #161624;
+  --bg-4:        #1c1c2e;
+  --bg-5:        #232336;
+
+  --blue:        #5b73ff;
+  --blue-b:      #4058d6;
+  --blue-glow:   rgba(91,115,255,0.14);
+  --blue-faint:  rgba(91,115,255,0.07);
+
+  --gold:        #f0c040;
+  --gold-b:      #c49a28;
+  --gold-glow:   rgba(240,192,64,0.12);
+  --gold-faint:  rgba(240,192,64,0.06);
+
+  --green:       #34d399;
+  --green-glow:  rgba(52,211,153,0.12);
+  --green-faint: rgba(52,211,153,0.07);
+
+  --rose:        #f87171;
+  --rose-glow:   rgba(248,113,113,0.12);
+
+  --violet:      #c084fc;
+  --violet-glow: rgba(192,132,252,0.12);
+
+  --orange:      #fb923c;
+
+  --t0:          #edeaf5;
+  --t1:          #8e8aad;
+  --t2:          #44415a;
+
+  --border:      #191928;
+  --border-1:    #222235;
+  --border-2:    #2d2d47;
+
+  --sidebar-w:   248px;
+  --r:           10px;
+  --r-lg:        14px;
+  --r-sm:        6px;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-0);
+  color: var(--t0);
+  display: flex;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Grain */
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.5;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius:2px; }
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto; overflow-x: hidden;
+  transition: width .3s ease;
+}
+
+.sb-head {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sb-brand {
+  display: flex; align-items: center; gap: 11px;
+}
+
+.sb-icon {
+  width: 34px; height: 34px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue) 0%, #8b5cf6 100%);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.sb-icon::before {
+  content:'W';
+  font-family: 'Spectral', serif;
+  font-size: 17px; font-weight: 700;
+  color: #fff; position: relative; z-index:1;
+}
+.sb-icon::after {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.2), transparent);
+}
+
+.sb-name { font-family:'Spectral',serif; font-size:15px; font-weight:600; color:var(--t0); letter-spacing:.02em; }
+.sb-tagline { font-size:9.5px; color:var(--t2); letter-spacing:.1em; text-transform:uppercase; margin-top:1px; }
+
+.sb-search {
+  margin: 12px 0 0;
+  display:flex; align-items:center; gap:8px;
+  background: var(--bg-2); border:1px solid var(--border-1);
+  border-radius: var(--r-sm); padding:7px 10px;
+  cursor:text; transition: border-color .15s;
+}
+.sb-search:hover { border-color: var(--border-2); }
+.sb-search-icon { color:var(--t2); font-size:12px; }
+.sb-search-text { font-size:12px; color:var(--t2); font-family:'Outfit',sans-serif; }
+.sb-search-kbd {
+  margin-left:auto; font-size:9px; color:var(--t2);
+  background:var(--bg-3); border:1px solid var(--border-1);
+  padding:1px 5px; border-radius:3px;
+  font-family:'Space Mono',monospace;
+}
+
+.sb-section {
+  font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--t2); font-weight:600;
+  padding: 18px 18px 6px;
+}
+
+.nav-item {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 18px; cursor:pointer;
+  font-size:13px; color:var(--t1); font-weight:400;
+  border-left:2px solid transparent;
+  transition: color .15s, background .15s, border-color .15s;
+  position:relative; margin: 1px 0;
+}
+.nav-item:hover { background:var(--bg-2); color:var(--t0); }
+.nav-item.active {
+  background: var(--blue-faint);
+  color: var(--blue);
+  border-left-color: var(--blue);
+  font-weight:500;
+}
+
+.nav-icon { font-size:13px; width:18px; text-align:center; flex-shrink:0; opacity:.8; }
+.nav-item.active .nav-icon { opacity:1; }
+
+.nav-badge {
+  margin-left:auto; background:var(--blue);
+  color:#fff; font-size:9px; font-weight:700;
+  padding:1px 6px; border-radius:10px;
+  font-family:'Space Mono',monospace; letter-spacing:.02em;
+}
+.nav-badge.gold { background:var(--gold); color:#0a0a10; }
+
+.sb-divider { border:none; border-top:1px solid var(--border); margin:6px 18px; }
+
+.sb-footer {
+  margin-top:auto; padding:14px 16px;
+  border-top:1px solid var(--border); flex-shrink:0;
+}
+
+.user-row {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:var(--r-sm);
+  cursor:pointer; transition:background .15s;
+}
+.user-row:hover { background:var(--bg-2); }
+
+.user-av {
+  width:30px; height:30px; border-radius:8px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#fff;
+}
+.user-name { font-size:12.5px; font-weight:500; color:var(--t0); }
+.user-plan { font-size:9.5px; color:var(--blue); font-family:'Space Mono',monospace; letter-spacing:.04em; }
+
+/* ═══════════════════════════════════════════
+   MAIN AREA
+═══════════════════════════════════════════ */
+.main {
+  flex:1; display:flex; flex-direction:column;
+  height:100vh; overflow:hidden; min-width:0;
+}
+
+/* ── Topbar ── */
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 30px; height:52px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg-0); flex-shrink:0;
+}
+
+.crumb {
+  display:flex; align-items:center; gap:6px;
+  font-size:12.5px; color:var(--t2);
+}
+.crumb-sep { opacity:.4; }
+.crumb-cur { color:var(--t0); font-weight:500; }
+
+.topbar-right { display:flex; align-items:center; gap:8px; }
+
+.tb-btn {
+  padding:5px 12px; font-size:12px; font-weight:500;
+  border:1px solid var(--border-1); background:transparent;
+  color:var(--t1); border-radius:var(--r-sm);
+  cursor:pointer; font-family:'Outfit',sans-serif;
+  transition: all .15s; letter-spacing:.01em;
+}
+.tb-btn:hover { border-color:var(--border-2); color:var(--t0); background:var(--bg-2); }
+
+.tb-btn-primary {
+  padding:5px 14px; font-size:12px; font-weight:600;
+  background: linear-gradient(135deg, var(--blue), #7c5cfc);
+  color:#fff; border:none; border-radius:var(--r-sm);
+  cursor:pointer; font-family:'Outfit',sans-serif;
+  transition: opacity .15s, transform .1s; letter-spacing:.01em;
+}
+.tb-btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+
+/* ── Content ── */
+.content {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  padding: 30px 34px;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE SYSTEM
+═══════════════════════════════════════════ */
+.page { display:none; }
+.page.active { display:block; animation: pageIn .28s ease; }
+
+@keyframes pageIn {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY SYSTEM
+═══════════════════════════════════════════ */
+.page-emoji { font-size:32px; margin-bottom:8px; line-height:1; }
+.page-title {
+  font-family:'Spectral',serif; font-size:27px; font-weight:600;
+  color:var(--t0); line-height:1.2; margin-bottom:5px;
+}
+.page-desc { font-size:13px; color:var(--t1); line-height:1.5; }
+.page-header { margin-bottom:28px; }
+
+.section-label {
+  font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--t2); font-weight:600; margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ═══════════════════════════════════════════
+   GRID SYSTEM
+═══════════════════════════════════════════ */
+.g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-bottom:20px; }
+.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-bottom:20px; }
+.g2 { display:grid; grid-template-columns:repeat(2,1fr); gap:13px; margin-bottom:20px; }
+.g21 { display:grid; grid-template-columns:2fr 1fr; gap:13px; margin-bottom:20px; }
+.g12 { display:grid; grid-template-columns:1fr 2fr; gap:13px; margin-bottom:20px; }
+.mb16 { margin-bottom:16px; }
+.mb20 { margin-bottom:20px; }
+.mb28 { margin-bottom:28px; }
+
+/* ═══════════════════════════════════════════
+   CARD
+═══════════════════════════════════════════ */
+.card {
+  background: var(--bg-2);
+  border:1px solid var(--border-1);
+  border-radius:var(--r);
+  padding:20px 22px;
+  transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color:var(--border-2); }
+
+.card-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px;
+}
+.card-title {
+  font-size:12.5px; font-weight:600; color:var(--t0);
+  letter-spacing:.02em;
+}
+.card-action {
+  font-size:11px; color:var(--blue); cursor:pointer;
+  font-weight:500; transition:color .15s;
+}
+.card-action:hover { color:#7c9dff; }
+
+/* ═══════════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════════ */
+.stat {
+  background: var(--bg-2); border:1px solid var(--border-1);
+  border-radius:var(--r); padding:18px 20px;
+  cursor:default; transition: border-color .2s, transform .2s;
+}
+.stat:hover { border-color:var(--border-2); transform:translateY(-2px); }
+
+.stat-label { font-size:10px; color:var(--t2); text-transform:uppercase; letter-spacing:.1em; font-weight:600; margin-bottom:10px; }
+.stat-val {
+  font-family:'Spectral',serif; font-size:30px; font-weight:600;
+  color:var(--t0); line-height:1; margin-bottom:7px;
+}
+.stat-val.blue { color:var(--blue); }
+.stat-val.gold { color:var(--gold); }
+.stat-val.green { color:var(--green); }
+.stat-val.rose  { color:var(--rose); }
+
+.stat-delta { font-size:11px; display:flex; align-items:center; gap:3px; color:var(--green); }
+.stat-delta.neg { color:var(--rose); }
+.stat-delta.neu { color:var(--t1); }
+
+/* ═══════════════════════════════════════════
+   TAG / BADGE SYSTEM
+═══════════════════════════════════════════ */
+.tag {
+  font-size:9.5px; padding:2px 8px; border-radius:20px;
+  font-weight:600; letter-spacing:.04em;
+  font-family:'Space Mono',monospace; white-space:nowrap;
+}
+.t-blue   { background:var(--blue-faint); color:var(--blue); border:1px solid rgba(91,115,255,.2); }
+.t-gold   { background:var(--gold-faint); color:var(--gold); border:1px solid rgba(240,192,64,.2); }
+.t-green  { background:var(--green-faint); color:var(--green); border:1px solid rgba(52,211,153,.15); }
+.t-rose   { background:var(--rose-glow); color:var(--rose); border:1px solid rgba(248,113,113,.2); }
+.t-violet { background:var(--violet-glow); color:var(--violet); border:1px solid rgba(192,132,252,.2); }
+.t-orange { background:rgba(251,146,60,.1); color:var(--orange); border:1px solid rgba(251,146,60,.2); }
+
+/* ═══════════════════════════════════════════
+   TASK ITEMS
+═══════════════════════════════════════════ */
+.task {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 6px; border-radius:6px;
+  cursor:pointer; transition:background .12s;
+  border-bottom:1px solid var(--border);
+}
+.task:last-child { border-bottom:none; }
+.task:hover { background:var(--bg-3); }
+
+.task-cb {
+  width:16px; height:16px; flex-shrink:0; margin-top:2px;
+  border:1.5px solid var(--border-2); border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; transition:all .15s;
+}
+.task-cb.done {
+  background:var(--blue); border-color:var(--blue); color:#fff;
+}
+
+.task-body { flex:1; min-width:0; }
+.task-text { font-size:13px; color:var(--t0); line-height:1.4; }
+.task-text.done { color:var(--t2); text-decoration:line-through; }
+.task-meta { display:flex; align-items:center; gap:6px; margin-top:4px; flex-wrap:wrap; }
+.task-time { font-size:10px; color:var(--t2); font-family:'Space Mono',monospace; }
+.task-pri { font-size:10px; width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.task-pri.p1 { background:var(--rose); }
+.task-pri.p2 { background:var(--gold); }
+.task-pri.p3 { background:var(--green); }
+
+/* ═══════════════════════════════════════════
+   PROGRESS BARS
+═══════════════════════════════════════════ */
+.prog-wrap { margin-bottom:13px; }
+.prog-meta { display:flex; justify-content:space-between; margin-bottom:5px; }
+.prog-label { font-size:12.5px; color:var(--t0); font-weight:500; }
+.prog-pct { font-size:11px; color:var(--t1); font-family:'Space Mono',monospace; }
+.prog-track { height:5px; background:var(--bg-4); border-radius:10px; overflow:hidden; }
+.prog-fill { height:100%; border-radius:10px; transition:width 1s cubic-bezier(.4,0,.2,1); }
+.pf-blue   { background:linear-gradient(90deg, var(--blue-b), var(--blue)); }
+.pf-gold   { background:linear-gradient(90deg, var(--gold-b), var(--gold)); }
+.pf-green  { background:linear-gradient(90deg, #22a377, var(--green)); }
+.pf-violet { background:linear-gradient(90deg, #8b5cf6, var(--violet)); }
+.pf-orange { background:linear-gradient(90deg, #d97706, var(--orange)); }
+
+/* ═══════════════════════════════════════════
+   HABITS
+═══════════════════════════════════════════ */
+.habit-row {
+  display:flex; align-items:center; gap:10px; margin-bottom:11px;
+}
+.habit-name { font-size:12.5px; color:var(--t0); width:120px; flex-shrink:0; font-weight:500; }
+.habit-dots { display:flex; gap:5px; flex:1; }
+.habit-dot {
+  width:22px; height:22px; border-radius:5px;
+  background:var(--bg-4); border:1px solid var(--border-1);
+  cursor:pointer; transition:all .15s;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700;
+}
+.hd-blue   { background:var(--blue);   border-color:var(--blue);   color:#fff; }
+.hd-gold   { background:var(--gold);   border-color:var(--gold);   color:#0a0a10; }
+.hd-green  { background:var(--green);  border-color:var(--green);  color:#0a0a10; }
+.hd-violet { background:var(--violet); border-color:var(--violet); color:#0a0a10; }
+.hd-rose   { background:var(--rose);   border-color:var(--rose);   color:#fff; }
+.habit-streak { font-size:10.5px; color:var(--gold); font-family:'Space Mono',monospace; width:34px; text-align:right; flex-shrink:0; }
+
+/* ═══════════════════════════════════════════
+   QUOTE CARD
+═══════════════════════════════════════════ */
+.quote-card {
+  background:linear-gradient(125deg, var(--blue-faint), rgba(124,92,252,.05));
+  border:1px solid rgba(91,115,255,.18);
+  border-radius:var(--r); padding:20px 24px;
+  position:relative; overflow:hidden; margin-bottom:20px;
+}
+.quote-card::before {
+  content:'\201C';
+  position:absolute; top:-18px; left:16px;
+  font-family:'Spectral',serif; font-size:90px;
+  color:rgba(91,115,255,.1); line-height:1; pointer-events:none;
+}
+.quote-text {
+  font-family:'Spectral',serif; font-size:15.5px;
+  color:var(--t0); line-height:1.65; font-style:italic;
+  position:relative; z-index:1; margin-bottom:8px;
+}
+.quote-author { font-size:10.5px; color:var(--blue); letter-spacing:.07em; text-transform:uppercase; font-weight:600; }
+
+/* ═══════════════════════════════════════════
+   WELCOME BANNER
+═══════════════════════════════════════════ */
+.welcome {
+  background:linear-gradient(125deg, rgba(91,115,255,.08) 0%, rgba(124,92,252,.05) 50%, rgba(240,192,64,.04) 100%);
+  border:1px solid rgba(91,115,255,.16);
+  border-radius:var(--r-lg); padding:24px 28px;
+  margin-bottom:22px; position:relative; overflow:hidden;
+}
+.welcome::before {
+  content:'WHALENT OS';
+  position:absolute; right:-8px; top:-16px;
+  font-family:'Spectral',serif; font-size:72px; font-weight:700;
+  color:rgba(91,115,255,.04); pointer-events:none; white-space:nowrap;
+}
+.welcome-date { font-size:10.5px; color:var(--blue); text-transform:uppercase; letter-spacing:.12em; font-weight:600; margin-bottom:4px; }
+.welcome-title { font-family:'Spectral',serif; font-size:23px; font-weight:600; color:var(--t0); margin-bottom:4px; }
+.welcome-sub { font-size:13px; color:var(--t1); }
+.welcome-chips { display:flex; gap:7px; margin-top:14px; flex-wrap:wrap; }
+.chip {
+  font-size:11px; padding:4px 11px; border-radius:20px;
+  border:1px solid var(--border-2); color:var(--t1);
+  cursor:pointer; transition:all .15s; font-weight:500;
+}
+.chip:hover { border-color:var(--blue); color:var(--blue); background:var(--blue-faint); }
+.chip.active { border-color:var(--blue); color:var(--blue); background:var(--blue-faint); }
+
+/* ═══════════════════════════════════════════
+   WEEK STRIP
+═══════════════════════════════════════════ */
+.week-strip { display:flex; gap:7px; margin-bottom:22px; }
+.wday {
+  flex:1; background:var(--bg-2); border:1px solid var(--border-1);
+  border-radius:var(--r-sm); padding:10px 4px; text-align:center;
+  cursor:pointer; transition:all .15s;
+}
+.wday:hover { border-color:var(--border-2); }
+.wday.today { border-color:var(--blue); background:var(--blue-faint); }
+.wday-n { font-size:9px; color:var(--t2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+.wday-d { font-family:'Spectral',serif; font-size:17px; font-weight:600; color:var(--t0); }
+.wday.today .wday-d { color:var(--blue); }
+.wday-dot { width:4px; height:4px; border-radius:50%; background:var(--blue); margin:4px auto 0; }
+
+/* ═══════════════════════════════════════════
+   POMODORO TIMER
+═══════════════════════════════════════════ */
+.pomo-card {
+  background:var(--bg-2); border:1px solid var(--border-1);
+  border-radius:var(--r); padding:20px;
+  display:flex; flex-direction:column; align-items:center;
+  gap:10px; position:relative; overflow:hidden;
+}
+.pomo-card::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% 0%, var(--blue-faint), transparent 70%);
+  pointer-events:none;
+}
+.pomo-mode { font-size:10px; color:var(--t1); text-transform:uppercase; letter-spacing:.1em; font-weight:600; }
+.pomo-ring-wrap { position:relative; width:100px; height:100px; }
+
+.pomo-ring-bg { fill:none; stroke:var(--bg-4); stroke-width:6; }
+.pomo-ring-fg { fill:none; stroke:var(--blue); stroke-width:6; stroke-linecap:round;
+  transform-origin:50px 50px; transform:rotate(-90deg);
+  transition:stroke-dashoffset .5s linear; }
+.pomo-ring-fg.break-mode { stroke:var(--green); }
+
+.pomo-center {
+  position:absolute; inset:0; display:flex;
+  flex-direction:column; align-items:center; justify-content:center;
+}
+.pomo-time {
+  font-family:'Space Mono',monospace; font-size:18px;
+  font-weight:700; color:var(--t0); letter-spacing:.02em;
+}
+.pomo-btns { display:flex; gap:7px; width:100%; }
+.pomo-btn-sm {
+  flex:1; padding:6px 0; font-size:11px; font-weight:600;
+  border-radius:6px; cursor:pointer; font-family:'Outfit',sans-serif;
+  transition:all .15s; letter-spacing:.02em;
+}
+.pomo-start { background:linear-gradient(135deg,var(--blue),#7c5cfc); color:#fff; border:none; }
+.pomo-start:hover { opacity:.88; }
+.pomo-reset { background:transparent; border:1px solid var(--border-2); color:var(--t1); }
+.pomo-reset:hover { border-color:var(--border-2); color:var(--t0); background:var(--bg-3); }
+.pomo-sessions { font-size:10.5px; color:var(--t2); font-family:'Space Mono',monospace; }
+
+/* ═══════════════════════════════════════════
+   TODAY'S PRIORITY
+═══════════════════════════════════════════ */
+.priority-hero {
+  background:linear-gradient(120deg, rgba(240,192,64,.08), rgba(240,192,64,.04));
+  border:1px solid rgba(240,192,64,.22);
+  border-radius:var(--r); padding:18px 22px;
+  margin-bottom:20px; position:relative; overflow:hidden;
+  cursor:pointer; transition:border-color .2s;
+}
+.priority-hero:hover { border-color:rgba(240,192,64,.35); }
+.priority-hero::before {
+  content:'#1'; position:absolute; right:18px; top:50%;
+  transform:translateY(-50%);
+  font-family:'Spectral',serif; font-size:52px; font-weight:700;
+  color:rgba(240,192,64,.08); pointer-events:none;
+}
+.priority-label { font-size:9.5px; color:var(--gold); text-transform:uppercase; letter-spacing:.12em; font-weight:700; margin-bottom:6px; }
+.priority-text { font-family:'Spectral',serif; font-size:17px; color:var(--t0); font-weight:500; margin-bottom:4px; }
+.priority-sub { font-size:11.5px; color:var(--t1); }
+
+/* ═══════════════════════════════════════════
+   MINI CALENDAR
+═══════════════════════════════════════════ */
+.cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.cal-month { font-size:12.5px; font-weight:600; color:var(--t0); }
+.cal-nav { cursor:pointer; color:var(--t2); font-size:11px; padding:2px 5px; border-radius:3px; transition:background .1s; }
+.cal-nav:hover { background:var(--bg-3); color:var(--t0); }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cal-dow { font-size:9px; color:var(--t2); text-align:center; padding:4px 0; font-weight:600; letter-spacing:.04em; }
+.cal-day { font-size:11px; text-align:center; padding:5px 2px; border-radius:5px; cursor:pointer; color:var(--t1); transition:background .1s; position:relative; }
+.cal-day:hover { background:var(--bg-3); color:var(--t0); }
+.cal-day.today { background:var(--blue); color:#fff; font-weight:700; }
+.cal-day.has-event::after { content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:3px; height:3px; background:var(--gold); border-radius:50%; }
+.cal-day.today.has-event::after { background:#fff; }
+.cal-day.empty { pointer-events:none; }
+
+/* ═══════════════════════════════════════════
+   PILL TABS
+═══════════════════════════════════════════ */
+.pill-tabs {
+  display:flex; gap:3px; margin-bottom:20px;
+  background:var(--bg-2); border:1px solid var(--border-1);
+  border-radius:8px; padding:4px; width:fit-content;
+}
+.pill-tab {
+  padding:5px 14px; font-size:12px; font-weight:500;
+  border-radius:5px; cursor:pointer; color:var(--t1);
+  transition:all .15s; letter-spacing:.01em;
+}
+.pill-tab.active { background:linear-gradient(135deg,var(--blue),#7c5cfc); color:#fff; }
+.pill-tab:not(.active):hover { color:var(--t0); background:var(--bg-3); }
+
+/* ═══════════════════════════════════════════
+   PROJECT CARDS
+═══════════════════════════════════════════ */
+.proj-card {
+  background:var(--bg-2); border:1px solid var(--border-1);
+  border-radius:var(--r); padding:18px 20px;
+  cursor:pointer; transition:all .2s;
+}
+.proj-card:hover { border-color:var(--border-2); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.3); }
+.proj-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+.proj-icon { font-size:22px; }
+.proj-title { font-size:13.5px; font-weight:600; color:var(--t0); margin-bottom:5px; }
+.proj-desc { font-size:12px; color:var(--t1); line-height:1.45; }
+.proj-foot { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+.proj-date { font-size:10px; color:var(--t2); font-family:'Space Mono',monospace; }
+
+.proj-add {
+  background:var(--bg-2); border:1px dashed var(--border-2);
+  border-radius:var(--r); padding:18px 20px;
+  cursor:pointer; transition:all .2s;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  min-height:140px; gap:6px;
+}
+.proj-add:hover { border-color:var(--blue); background:var(--blue-faint); }
+.proj-add-icon { font-size:24px; opacity:.25; }
+.proj-add-text { font-size:12px; color:var(--t2); }
+
+/* ═══════════════════════════════════════════
+   GOAL CARDS
+═══════════════════════════════════════════ */
+.goal-card {
+  background:var(--bg-2); border:1px solid var(--border-1);
+  border-radius:var(--r); padding:18px 22px;
+  margin-bottom:12px; transition:border-color .2s;
+}
+.goal-card:hover { border-color:var(--border-2); }
+.goal-title { font-size:14px; font-weight:600; color:var(--t0); margin-bottom:4px; }
+.goal-desc { font-size:12px; color:var(--t1); margin-bottom:12px; line-height:1.45; }
+.goal-foot { display:flex; align-items:center; justify-content:space-between; }
+.goal-date { font-size:10px; color:var(--t2); font-family:'Space Mono',monospace; }
+.status-pill { font-size:9.5px; padding:2px 8px; border-radius:6px; font-weight:600; font-family:'Space Mono',monospace; }
+.sp-active   { background:var(--blue-faint); color:var(--blue); border:1px solid rgba(91,115,255,.2); }
+.sp-track    { background:var(--green-faint); color:var(--green); border:1px solid rgba(52,211,153,.2); }
+.sp-plan     { background:var(--violet-glow); color:var(--violet); border:1px solid rgba(192,132,252,.2); }
+.sp-pause    { background:rgba(240,192,64,.08); color:var(--gold); border:1px solid rgba(240,192,64,.2); }
+
+/* ═══════════════════════════════════════════
+   FINANCE
+═══════════════════════════════════════════ */
+.fin-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 0; border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.fin-row:last-child { border-bottom:none; }
+.fin-cat { display:flex; align-items:center; gap:10px; }
+.fin-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.fin-name { color:var(--t0); font-weight:500; }
+.fin-sub { font-size:10.5px; color:var(--t2); margin-top:1px; }
+.fin-amt { font-family:'Space Mono',monospace; font-size:12.5px; }
+.fin-amt.inc { color:var(--green); }
+.fin-amt.exp { color:var(--rose); }
+.fin-amt.neu { color:var(--t1); }
+
+/* ═══════════════════════════════════════════
+   SECOND BRAIN / KB
+═══════════════════════════════════════════ */
+.kb-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:10px 6px; border-radius:6px;
+  cursor:pointer; transition:background .12s;
+  border-bottom:1px solid var(--border);
+}
+.kb-item:last-child { border-bottom:none; }
+.kb-item:hover { background:var(--bg-3); }
+.kb-icon { font-size:16px; width:32px; height:32px; background:var(--bg-3); border-radius:7px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-1); }
+.kb-title { font-size:13px; font-weight:500; color:var(--t0); margin-bottom:3px; }
+.kb-meta { font-size:10.5px; color:var(--t2); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+/* ═══════════════════════════════════════════
+   CAPTURE
+═══════════════════════════════════════════ */
+.capture-box {
+  background:var(--bg-3); border:1px solid var(--border-2);
+  border-radius:var(--r-sm); padding:14px 16px;
+  display:flex; gap:10px; margin-bottom:14px;
+  transition:border-color .2s;
+}
+.capture-box:focus-within { border-color:var(--blue); }
+.capture-input {
+  flex:1; background:transparent; border:none; outline:none;
+  color:var(--t0); font-size:13.5px;
+  font-family:'Outfit',sans-serif; line-height:1.5;
+  resize:none; min-height:60px;
+}
+.capture-input::placeholder { color:var(--t2); }
+
+/* ═══════════════════════════════════════════
+   JOURNAL
+═══════════════════════════════════════════ */
+.journal-section {
+  background:var(--bg-3); border:1px solid var(--border-1);
+  border-radius:var(--r-sm); padding:14px 16px;
+  margin-bottom:12px; transition:border-color .2s;
+}
+.journal-section:focus-within { border-color:var(--blue); }
+.journal-label {
+  font-size:9.5px; text-transform:uppercase; letter-spacing:.1em;
+  font-weight:700; margin-bottom:8px;
+}
+.journal-label.morning { color:var(--gold); }
+.journal-label.midday  { color:var(--blue); }
+.journal-label.evening { color:var(--violet); }
+
+/* ═══════════════════════════════════════════
+   SVG BAR CHART (Finance)
+═══════════════════════════════════════════ */
+.chart-wrap {
+  padding:4px 0 10px;
+}
+.chart-label {
+  display:flex; justify-content:space-between;
+  font-size:9.5px; color:var(--t2);
+  font-family:'Space Mono',monospace; margin-top:6px;
+}
+
+/* ═══════════════════════════════════════════
+   CONTRIBUTION HEATMAP (Habits)
+═══════════════════════════════════════════ */
+.heatmap-wrap { margin-bottom:16px; }
+.heatmap-months {
+  display:flex; font-size:9px; color:var(--t2);
+  margin-bottom:4px; font-family:'Space Mono',monospace;
+  gap:0;
+}
+.heatmap-grid {
+  display:grid; grid-template-columns:repeat(13,1fr); gap:3px;
+}
+.hm-cell {
+  aspect-ratio:1; border-radius:2px; cursor:pointer;
+  background:var(--bg-4); transition:all .12s;
+}
+.hm-cell:hover { opacity:.8; transform:scale(1.15); }
+.hm-0 { background:var(--bg-4); }
+.hm-1 { background:rgba(91,115,255,.25); }
+.hm-2 { background:rgba(91,115,255,.5); }
+.hm-3 { background:rgba(91,115,255,.75); }
+.hm-4 { background:var(--blue); }
+
+/* ═══════════════════════════════════════════
+   INBOX ITEMS
+═══════════════════════════════════════════ */
+.inbox-item {
+  display:flex; align-items:flex-start; gap:11px;
+  padding:11px 8px; border-radius:7px;
+  cursor:pointer; transition:background .12s;
+  margin-bottom:2px;
+}
+.inbox-item:hover { background:var(--bg-3); }
+.inbox-icon { font-size:15px; width:28px; height:28px; text-align:center; line-height:28px; flex-shrink:0; }
+.inbox-content { flex:1; min-width:0; }
+.inbox-title { font-size:13px; color:var(--t0); font-weight:500; }
+.inbox-sub { font-size:10.5px; color:var(--t2); margin-top:2px; }
+.inbox-right { display:flex; flex-direction:column; align-items:flex-end; gap:5px; }
+.inbox-time { font-size:10px; color:var(--t2); font-family:'Space Mono',monospace; white-space:nowrap; }
+
+/* ═══════════════════════════════════════════
+   ONBOARDING BAR
+═══════════════════════════════════════════ */
+.onboard-bar {
+  background:var(--green-faint); border:1px solid rgba(52,211,153,.18);
+  border-radius:8px; padding:10px 16px;
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:18px; font-size:12.5px; color:var(--t1);
+}
+.onboard-bar strong { color:var(--green); }
+
+/* ═══════════════════════════════════════════
+   NET WORTH DISPLAY
+═══════════════════════════════════════════ */
+.nw-card {
+  background:linear-gradient(120deg, rgba(91,115,255,.07), rgba(52,211,153,.05));
+  border:1px solid rgba(91,115,255,.15);
+  border-radius:var(--r); padding:20px 24px; margin-bottom:20px;
+}
+.nw-label { font-size:10px; color:var(--t2); text-transform:uppercase; letter-spacing:.12em; font-weight:600; margin-bottom:6px; }
+.nw-value { font-family:'Spectral',serif; font-size:36px; font-weight:700; color:var(--t0); margin-bottom:4px; }
+.nw-delta { font-size:12px; color:var(--green); display:flex; align-items:center; gap:4px; }
+
+/* ═══════════════════════════════════════════
+   DOC TOOLBAR
+═══════════════════════════════════════════ */
+.doc-toolbar {
+  display:flex; gap:5px; align-items:center;
+  flex-wrap:wrap; margin-bottom:12px; padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.doc-btn {
+  padding:3px 9px; font-size:11px; border-radius:4px;
+  border:1px solid var(--border-1); background:var(--bg-3);
+  color:var(--t1); cursor:pointer; font-family:'Outfit',sans-serif;
+  transition:all .12s;
+}
+.doc-btn:hover { color:var(--t0); border-color:var(--border-2); }
+
+/* ═══════════════════════════════════════════
+   READING CARD
+═══════════════════════════════════════════ */
+.read-item {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:12px 6px; border-bottom:1px solid var(--border);
+}
+.read-item:last-child { border-bottom:none; }
+.read-spine {
+  width:36px; flex-shrink:0; border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; aspect-ratio:.65; font-family:'Spectral',serif;
+}
+.read-body { flex:1; }
+.read-title { font-size:13px; font-weight:600; color:var(--t0); margin-bottom:2px; }
+.read-author { font-size:11px; color:var(--t2); margin-bottom:8px; }
+.read-status { font-size:10px; color:var(--t2); margin-top:5px; }
+
+/* utility */
+.flex-between { display:flex; align-items:center; justify-content:space-between; }
+.flex-center  { display:flex; align-items:center; justify-content:center; }
+.gap6  { gap:6px; }
+.gap10 { gap:10px; }
+.w100  { width:100%; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     SIDEBAR
+══════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-brand">
+      <div class="sb-icon"></div>
+      <div>
+        <div class="sb-name">WHALENT OS</div>
+        <div class="sb-tagline">Life Operating System</div>
+      </div>
+    </div>
+    <div class="sb-search">
+      <span class="sb-search-icon">⌕</span>
+      <span class="sb-search-text">Search everything…</span>
+      <span class="sb-search-kbd">⌘K</span>
+    </div>
+  </div>
+
+  <div class="sb-section">Workspace</div>
+  <div class="nav-item active" onclick="goPage('dashboard',this)">
+    <span class="nav-icon">⊞</span> Dashboard
+  </div>
+  <div class="nav-item" onclick="goPage('capture',this)">
+    <span class="nav-icon">⚡</span> Quick Capture
+    <span class="nav-badge">3</span>
+  </div>
+
+  <div class="sb-section">Productivity</div>
+  <div class="nav-item" onclick="goPage('tasks',this)">
+    <span class="nav-icon">◻</span> Tasks
+    <span class="nav-badge">8</span>
+  </div>
+  <div class="nav-item" onclick="goPage('projects',this)">
+    <span class="nav-icon">◈</span> Projects
+  </div>
+  <div class="nav-item" onclick="goPage('goals',this)">
+    <span class="nav-icon">◎</span> Goals & OKRs
+  </div>
+
+  <div class="sb-section">Life OS</div>
+  <div class="nav-item" onclick="goPage('habits',this)">
+    <span class="nav-icon">◉</span> Habits
+  </div>
+  <div class="nav-item" onclick="goPage('finance',this)">
+    <span class="nav-icon">◆</span> Finance
+  </div>
+  <div class="nav-item" onclick="goPage('journal',this)">
+    <span class="nav-icon">✦</span> Journal
+  </div>
+
+  <div class="sb-section">Knowledge</div>
+  <div class="nav-item" onclick="goPage('brain',this)">
+    <span class="nav-icon">❋</span> Second Brain
+  </div>
+  <div class="nav-item" onclick="goPage('resources',this)">
+    <span class="nav-icon">◩</span> Resources
+  </div>
+
+  <hr class="sb-divider">
+
+  <div class="sb-footer">
+    <div class="user-row">
+      <div class="user-av">Y</div>
+      <div>
+        <div class="user-name">Your Name</div>
+        <div class="user-plan">WHALENT · PRO</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════════════════════════
+     MAIN
+══════════════════════════════ -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="crumb">
+      <span>WHALENT OS</span>
+      <span class="crumb-sep">›</span>
+      <span class="crumb-cur" id="crumb-cur">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn">🔔</button>
+      <button class="tb-btn">⚙ Settings</button>
+      <button class="tb-btn-primary" onclick="goPage('capture',null)">+ Capture</button>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+
+<!-- ══════════════════════════════
+     DASHBOARD
+══════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <div class="welcome">
+    <div class="welcome-date" id="today-date">Loading…</div>
+    <div class="welcome-title">Good morning. Ready to perform? ✦</div>
+    <div class="welcome-sub">You have <strong style="color:var(--blue)">5 tasks</strong> remaining and <strong style="color:var(--gold)">3 habits</strong> to complete today.</div>
+    <div class="welcome-chips">
+      <span class="chip active">All Areas</span>
+      <span class="chip">Work</span>
+      <span class="chip">Personal</span>
+      <span class="chip">Deep Work</span>
+      <span class="chip">Wellness</span>
+    </div>
+  </div>
+
+  <!-- WEEK STRIP -->
+  <div class="week-strip" id="week-strip"></div>
+
+  <!-- TODAY'S PRIORITY -->
+  <div class="priority-hero" onclick="goPage('tasks',document.querySelectorAll('.nav-item')[2])">
+    <div class="priority-label">⭐ Today's #1 Priority</div>
+    <div class="priority-text">Complete the weekly strategy review & plan next sprint</div>
+    <div class="priority-sub">Deep work · Estimated 90 min · Due today at 5 PM</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="g4 mb20">
+    <div class="stat">
+      <div class="stat-label">Tasks Due Today</div>
+      <div class="stat-val blue" data-count="8">8</div>
+      <div class="stat-delta">↑ 3 completed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Habit Streak</div>
+      <div class="stat-val gold" data-count="21">21</div>
+      <div class="stat-delta">🔥 days strong</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Active Goals</div>
+      <div class="stat-val" data-count="6">6</div>
+      <div class="stat-delta">↑ 4 on track</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Savings Rate</div>
+      <div class="stat-val green" data-count="68">68%</div>
+      <div class="stat-delta">↑ +4% vs last mo.</div>
+    </div>
+  </div>
+
+  <div class="g21">
+
+    <!-- TASK LIST -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Today's Tasks</span>
+        <span class="card-action" onclick="goPage('tasks',null)">View all →</span>
+      </div>
+
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p1"></div>
+        <div class="task-cb done">✓</div>
+        <div class="task-body">
+          <div class="task-text done">Morning planning session — set intentions</div>
+          <div class="task-meta"><span class="tag t-green">Done</span><span class="task-time">07:00</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p1"></div>
+        <div class="task-cb done">✓</div>
+        <div class="task-body">
+          <div class="task-text done">Review dashboard metrics & KPIs</div>
+          <div class="task-meta"><span class="tag t-blue">Work</span><span class="task-time">09:00</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p1"></div>
+        <div class="task-cb done">✓</div>
+        <div class="task-body">
+          <div class="task-text done">30-minute workout session</div>
+          <div class="task-meta"><span class="tag t-green">Wellness</span><span class="task-time">10:00</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p1"></div>
+        <div class="task-cb"></div>
+        <div class="task-body">
+          <div class="task-text">Weekly strategy review & sprint planning</div>
+          <div class="task-meta"><span class="tag t-rose">Urgent</span><span class="task-time">14:00</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p2"></div>
+        <div class="task-cb"></div>
+        <div class="task-body">
+          <div class="task-text">Research report — draft & outline</div>
+          <div class="task-meta"><span class="tag t-blue">Work</span><span class="task-time">15:30</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p2"></div>
+        <div class="task-cb"></div>
+        <div class="task-body">
+          <div class="task-text">Update project status & milestones</div>
+          <div class="task-meta"><span class="tag t-violet">Projects</span><span class="task-time">17:00</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p3"></div>
+        <div class="task-cb"></div>
+        <div class="task-body">
+          <div class="task-text">Evening reading — 30 minutes</div>
+          <div class="task-meta"><span class="tag t-gold">Personal</span><span class="task-time">21:00</span></div>
+        </div>
+      </div>
+      <div class="task" onclick="toggleTask(this)">
+        <div class="task-pri p3"></div>
+        <div class="task-cb"></div>
+        <div class="task-body">
+          <div class="task-text">Journal — reflect on today's wins</div>
+          <div class="task-meta"><span class="tag t-gold">Journal</span><span class="task-time">22:00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:13px">
+
+      <!-- POMODORO TIMER -->
+      <div class="pomo-card">
+        <div class="pomo-mode" id="timer-mode">🎯 Focus Session</div>
+        <div class="pomo-ring-wrap">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle class="pomo-ring-bg" cx="50" cy="50" r="44"/>
+            <circle class="pomo-ring-fg" id="timer-ring" cx="50" cy="50" r="44"
+              stroke-dasharray="276.46" stroke-dashoffset="0"/>
+          </svg>
+          <div class="pomo-center">
+            <div class="pomo-time" id="timer-display">25:00</div>
+          </div>
+        </div>
+        <div class="pomo-sessions">Sessions today: <span id="sessions-count">0</span></div>
+        <div class="pomo-btns">
+          <button class="pomo-btn-sm pomo-start" id="timer-btn" onclick="startTimer()">Start Focus</button>
+          <button class="pomo-btn-sm pomo-reset" onclick="resetTimer()">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- MINI CALENDAR -->
+      <div class="card" style="padding:16px 18px">
+        <div class="cal-head">
+          <span class="cal-month" id="cal-month">March 2026</span>
+          <div style="display:flex;gap:2px">
+            <span class="cal-nav">‹</span>
+            <span class="cal-nav">›</span>
+          </div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ACTIVE PROJECTS -->
+  <div class="section-label">Active Projects</div>
+  <div class="g3 mb20">
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">🚀</div><span class="tag t-rose">In Progress</span></div>
+      <div class="proj-title">Product Launch Campaign</div>
+      <div class="proj-desc">Full go-to-market strategy, content calendar, and launch timeline coordination.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-blue" style="width:72%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: Apr 15</span><span class="tag t-blue">72%</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">📊</div><span class="tag t-gold">Review</span></div>
+      <div class="proj-title">Q2 Strategy Planning</div>
+      <div class="proj-desc">OKR alignment, budget review, team capacity planning, and roadmap refinement.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-gold" style="width:45%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: Apr 1</span><span class="tag t-gold">45%</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">🎨</div><span class="tag t-violet">Design</span></div>
+      <div class="proj-title">Brand Identity Refresh</div>
+      <div class="proj-desc">Visual system update, typography guidelines, color palette, and asset library.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-violet" style="width:28%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: May 1</span><span class="tag t-violet">28%</span></div>
+    </div>
+  </div>
+
+  <!-- QUOTE -->
+  <div class="quote-card">
+    <div class="quote-text">The secret of getting ahead is getting started. Don't wait for the perfect moment — the perfect moment is now, built one disciplined day at a time.</div>
+    <div class="quote-author">Daily Wisdom · WHALENT OS</div>
+  </div>
+
+</div><!-- /dashboard -->
+
+
+<!-- ══════════════════════════════
+     QUICK CAPTURE
+══════════════════════════════ -->
+<div class="page" id="page-capture">
+  <div class="page-header">
+    <div class="page-emoji">⚡</div>
+    <div class="page-title">Quick Capture</div>
+    <div class="page-desc">Capture any thought in under 5 seconds. Sort it during your weekly review. Zero friction.</div>
+  </div>
+
+  <div class="onboard-bar">
+    💡 <span><strong>Best practice:</strong> Capture everything now — don't sort mid-flow. Process your inbox every Sunday in your Weekly Review.</span>
+  </div>
+
+  <div class="card mb20">
+    <div class="doc-toolbar">
+      <span class="doc-btn">📋 Task</span>
+      <span class="doc-btn">💡 Idea</span>
+      <span class="doc-btn">📖 Note</span>
+      <span class="doc-btn">🔗 Link</span>
+      <span class="doc-btn">📅 Event</span>
+      <span class="doc-btn">❓ Question</span>
+    </div>
+    <div class="capture-box" style="align-items:flex-start; flex-direction:column; gap:8px">
+      <div style="display:flex;gap:10px;width:100%">
+        <span style="font-size:18px;margin-top:3px">⚡</span>
+        <textarea class="capture-input" placeholder="What's on your mind? Type freely — no structure needed right now…" style="min-height:80px"></textarea>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="tb-btn-primary" style="padding:5px 16px">Save to Inbox</button>
+        <button class="tb-btn" style="padding:5px 14px">Save + Tag</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Inbox · 3 items</span>
+      <span class="card-action">Process All →</span>
+    </div>
+
+    <div class="inbox-item">
+      <div class="inbox-icon">💡</div>
+      <div class="inbox-content">
+        <div class="inbox-title">New product feature idea — AI-powered task prioritization</div>
+        <div class="inbox-sub">Could automatically resurface tasks based on energy level and available time</div>
+      </div>
+      <div class="inbox-right">
+        <div class="inbox-time">2h ago</div>
+        <div style="display:flex;gap:4px">
+          <span class="tag t-violet" style="cursor:pointer">→ Ideas</span>
+          <span class="tag t-blue" style="cursor:pointer">→ Project</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="inbox-item">
+      <div class="inbox-icon">🔗</div>
+      <div class="inbox-content">
+        <div class="inbox-title">Read later: "How compounding works beyond just money"</div>
+        <div class="inbox-sub">Article from newsletter — skills, relationships, habits all compound</div>
+      </div>
+      <div class="inbox-right">
+        <div class="inbox-time">5h ago</div>
+        <div style="display:flex;gap:4px">
+          <span class="tag t-gold" style="cursor:pointer">→ Resources</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="inbox-item">
+      <div class="inbox-icon">📋</div>
+      <div class="inbox-content">
+        <div class="inbox-title">Schedule a monthly financial review — first Friday each month</div>
+        <div class="inbox-sub">Block 1 hour, prepare income/expense summary beforehand</div>
+      </div>
+      <div class="inbox-right">
+        <div class="inbox-time">Yesterday</div>
+        <div style="display:flex;gap:4px">
+          <span class="tag t-rose" style="cursor:pointer">→ Tasks</span>
+          <span class="tag t-green" style="cursor:pointer">→ Recurring</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     TASKS
+══════════════════════════════ -->
+<div class="page" id="page-tasks">
+  <div class="page-header">
+    <div class="page-emoji">◻</div>
+    <div class="page-title">Task Manager</div>
+    <div class="page-desc">Built on the Eisenhower Matrix. Do what matters, eliminate what doesn't.</div>
+  </div>
+
+  <div class="pill-tabs">
+    <div class="pill-tab active">All Tasks</div>
+    <div class="pill-tab">Today</div>
+    <div class="pill-tab">This Week</div>
+    <div class="pill-tab">Upcoming</div>
+    <div class="pill-tab">Someday</div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" style="color:var(--rose)">🔴 Do — Urgent & Important</span>
+        <span class="card-action">+ Add</span>
+      </div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p1"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Weekly strategy review & sprint plan</div><div class="task-meta"><span class="tag t-rose">Urgent</span><span class="task-time">Today</span></div></div></div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p1"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Respond to critical client feedback</div><div class="task-meta"><span class="tag t-blue">Work</span><span class="task-time">Today</span></div></div></div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p1"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Fix critical bug in production</div><div class="task-meta"><span class="tag t-rose">P1</span><span class="task-time">ASAP</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" style="color:var(--blue)">🔵 Schedule — Important, Not Urgent</span>
+        <span class="card-action">+ Add</span>
+      </div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p2"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Read & study: skill development session</div><div class="task-meta"><span class="tag t-gold">Growth</span><span class="task-time">This week</span></div></div></div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p2"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Plan next quarter's goals & OKRs</div><div class="task-meta"><span class="tag t-blue">Strategy</span><span class="task-time">Apr 1</span></div></div></div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p2"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Build personal CRM & contact tracker</div><div class="task-meta"><span class="tag t-violet">Systems</span><span class="task-time">Ongoing</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" style="color:var(--gold)">🟡 Delegate — Urgent, Not Important</span>
+        <span class="card-action">+ Add</span>
+      </div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p2"></div><div class="task-cb done">✓</div><div class="task-body"><div class="task-text done">Forward meeting notes to team</div><div class="task-meta"><span class="tag t-green">Done</span></div></div></div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p3"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Reply to non-critical email thread</div><div class="task-meta"><span class="tag t-gold">Comms</span><span class="task-time">Mar 28</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" style="color:var(--green)">🟢 Eliminate — Not Urgent, Not Important</span>
+        <span class="card-action">+ Add</span>
+      </div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p3"></div><div class="task-cb done">✓</div><div class="task-body"><div class="task-text done">Mindless social media browsing ⚠️</div><div class="task-meta"><span class="tag t-rose">Removed</span></div></div></div>
+      <div class="task" onclick="toggleTask(this)"><div class="task-pri p3"></div><div class="task-cb"></div><div class="task-body"><div class="task-text">Unsubscribe from 10 unused email lists</div><div class="task-meta"><span class="tag t-green">Delegate</span><span class="task-time">Someday</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     PROJECTS
+══════════════════════════════ -->
+<div class="page" id="page-projects">
+  <div class="page-header">
+    <div class="page-emoji">◈</div>
+    <div class="page-title">Projects</div>
+    <div class="page-desc">Full visibility into your active initiatives, timelines, and progress milestones.</div>
+  </div>
+
+  <div class="g3">
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">🚀</div><span class="tag t-rose">In Progress</span></div>
+      <div class="proj-title">Product Launch Campaign</div>
+      <div class="proj-desc">Full go-to-market strategy, content calendar, messaging framework and launch day coordination.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-blue" style="width:72%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: Apr 15, 2026</span><span class="tag t-blue">72%</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">📊</div><span class="tag t-gold">Review</span></div>
+      <div class="proj-title">Q2 Strategy Planning</div>
+      <div class="proj-desc">OKR alignment, budget planning, team capacity mapping, and quarterly roadmap refinement.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-gold" style="width:45%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: Apr 1, 2026</span><span class="tag t-gold">45%</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">🎨</div><span class="tag t-violet">Design</span></div>
+      <div class="proj-title">Brand Identity Refresh</div>
+      <div class="proj-desc">Visual system update, typography guidelines, color palette, component library and asset documentation.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-violet" style="width:28%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: May 1, 2026</span><span class="tag t-violet">28%</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">📚</div><span class="tag t-green">Ongoing</span></div>
+      <div class="proj-title">Personal Learning Curriculum</div>
+      <div class="proj-desc">Curated skill-building path: technical, creative, and business domains. 12-book reading program.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-green" style="width:58%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Due: Dec 31, 2026</span><span class="tag t-green">58%</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-head"><div class="proj-icon">💰</div><span class="tag t-orange">Planned</span></div>
+      <div class="proj-title">Financial Independence Plan</div>
+      <div class="proj-desc">Net worth tracking, investment portfolio setup, passive income streams and FI number calculation.</div>
+      <div style="margin:12px 0"><div class="prog-track"><div class="prog-fill pf-orange" style="width:20%"></div></div></div>
+      <div class="proj-foot"><span class="proj-date">Starts: May 2026</span><span class="tag t-orange">20%</span></div>
+    </div>
+    <div class="proj-add">
+      <div class="proj-add-icon">+</div>
+      <div class="proj-add-text">Create New Project</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     GOALS
+══════════════════════════════ -->
+<div class="page" id="page-goals">
+  <div class="page-header">
+    <div class="page-emoji">◎</div>
+    <div class="page-title">Goals & OKRs</div>
+    <div class="page-desc">Set, track, and achieve your most important objectives — quarterly and annual.</div>
+  </div>
+
+  <div class="g4 mb20">
+    <div class="stat"><div class="stat-label">Active Goals</div><div class="stat-val blue">6</div><div class="stat-delta">This quarter</div></div>
+    <div class="stat"><div class="stat-label">On Track</div><div class="stat-val green">4</div><div class="stat-delta">↑ 67% rate</div></div>
+    <div class="stat"><div class="stat-label">Avg. Progress</div><div class="stat-val gold">41%</div><div class="stat-delta">↑ vs last qtr</div></div>
+    <div class="stat"><div class="stat-label">Completed</div><div class="stat-val">2</div><div class="stat-delta">This year</div></div>
+  </div>
+
+  <div class="section-label">Q2 2026 — Objectives</div>
+
+  <div class="goal-card">
+    <div class="prog-wrap">
+      <div class="prog-meta"><div class="prog-label">Launch & ship first major project milestone</div><div class="prog-pct">72%</div></div>
+      <div class="prog-track"><div class="prog-fill pf-blue" style="width:72%"></div></div>
+    </div>
+    <div class="goal-desc">Key result: Ship v1.0, gather 50 user responses, iterate on core feedback loop. Campaign live by April 15.</div>
+    <div class="goal-foot"><span class="goal-date">Due: Apr 15, 2026</span><span class="status-pill sp-track">On Track ✓</span></div>
+  </div>
+
+  <div class="goal-card">
+    <div class="prog-wrap">
+      <div class="prog-meta"><div class="prog-label">Read 12 books this year — 1 per month</div><div class="prog-pct">25%</div></div>
+      <div class="prog-track"><div class="prog-fill pf-gold" style="width:25%"></div></div>
+    </div>
+    <div class="goal-desc">3 books completed. Currently reading on behavioral psychology. Next: business systems & execution.</div>
+    <div class="goal-foot"><span class="goal-date">Due: Dec 31, 2026</span><span class="status-pill sp-track">On Track ✓</span></div>
+  </div>
+
+  <div class="goal-card">
+    <div class="prog-wrap">
+      <div class="prog-meta"><div class="prog-label">Build meaningful professional network — 50 connections</div><div class="prog-pct">32%</div></div>
+      <div class="prog-track"><div class="prog-fill pf-violet" style="width:32%"></div></div>
+    </div>
+    <div class="goal-desc">16 of 50 quality connections made. Focus on mentors, collaborators, and peer group with mutual goals.</div>
+    <div class="goal-foot"><span class="goal-date">Due: Sep 30, 2026</span><span class="status-pill sp-active">In Progress</span></div>
+  </div>
+
+  <div class="goal-card">
+    <div class="prog-wrap">
+      <div class="prog-meta"><div class="prog-label">Run 500 km this year</div><div class="prog-pct">38%</div></div>
+      <div class="prog-track"><div class="prog-fill pf-green" style="width:38%"></div></div>
+    </div>
+    <div class="goal-desc">190 km logged. Current pace puts finish ahead of schedule. Maintaining 5-day-per-week consistency.</div>
+    <div class="goal-foot"><span class="goal-date">Due: Dec 31, 2026</span><span class="status-pill sp-track">On Track ✓</span></div>
+  </div>
+
+  <div class="goal-card">
+    <div class="prog-wrap">
+      <div class="prog-meta"><div class="prog-label">Reach savings target — 65% monthly rate</div><div class="prog-pct">68%</div></div>
+      <div class="prog-track"><div class="prog-fill pf-orange" style="width:68%"></div></div>
+    </div>
+    <div class="goal-desc">Currently at 68% — above target. Key driver: reduced discretionary spend, increased income stream.</div>
+    <div class="goal-foot"><span class="goal-date">Ongoing · Monthly</span><span class="status-pill sp-track">Exceeding ✓</span></div>
+  </div>
+
+  <div class="goal-card">
+    <div class="prog-wrap">
+      <div class="prog-meta"><div class="prog-label">Establish daily meditation practice — 10 min/day</div><div class="prog-pct">18%</div></div>
+      <div class="prog-track"><div class="prog-fill pf-violet" style="width:18%"></div></div>
+    </div>
+    <div class="goal-desc">Still building the habit foundation. Struggled with consistency — revisiting cue-routine-reward loop.</div>
+    <div class="goal-foot"><span class="goal-date">Due: Jun 30, 2026</span><span class="status-pill sp-pause">Needs Focus</span></div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════
+     HABITS
+══════════════════════════════ -->
+<div class="page" id="page-habits">
+  <div class="page-header">
+    <div class="page-emoji">◉</div>
+    <div class="page-title">Habit Tracker</div>
+    <div class="page-desc">Build the identity you want, one rep at a time. Click any dot to log a habit.</div>
+  </div>
+
+  <div class="g4 mb20">
+    <div class="stat"><div class="stat-label">Longest Streak</div><div class="stat-val gold">21</div><div class="stat-delta">🔥 Running</div></div>
+    <div class="stat"><div class="stat-label">Today</div><div class="stat-val blue">3 / 5</div><div class="stat-delta">↑ 60%</div></div>
+    <div class="stat"><div class="stat-label">This Week</div><div class="stat-val green">82%</div><div class="stat-delta">↑ Strong</div></div>
+    <div class="stat"><div class="stat-label">Habits Active</div><div class="stat-val">5</div><div class="stat-delta">Tracking</div></div>
+  </div>
+
+  <!-- CONTRIBUTION HEATMAP -->
+  <div class="card mb20">
+    <div class="card-head">
+      <span class="card-title">Annual Contribution View — Running Consistency</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:10px;color:var(--t2)">Less</span>
+        <div style="display:flex;gap:3px">
+          <div style="width:10px;height:10px;border-radius:2px;background:var(--bg-4)"></div>
+          <div style="width:10px;height:10px;border-radius:2px;background:rgba(91,115,255,.25)"></div>
+          <div style="width:10px;height:10px;border-radius:2px;background:rgba(91,115,255,.5)"></div>
+          <div style="width:10px;height:10px;border-radius:2px;background:var(--blue)"></div>
+        </div>
+        <span style="font-size:10px;color:var(--t2)">More</span>
+      </div>
+    </div>
+    <div class="heatmap-wrap" id="heatmap-container"></div>
+  </div>
+
+  <!-- WEEKLY TRACKER -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">This Week — Click to Track</span>
+      <span class="card-action">+ Add Habit</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:10px">
+      <div style="width:120px;font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;font-weight:600">Habit</div>
+      <div style="display:flex;gap:5px;flex:1">
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--t2);font-weight:600">M</div>
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--t2);font-weight:600">T</div>
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--t2);font-weight:600">W</div>
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--blue);font-weight:700">T</div>
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--t2);font-weight:600">F</div>
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--t2);font-weight:600">S</div>
+        <div style="width:22px;text-align:center;font-size:9.5px;color:var(--t2);font-weight:600">S</div>
+      </div>
+      <div style="width:36px;text-align:right;font-size:9px;color:var(--t2);font-weight:600">STK</div>
+    </div>
+
+    <div class="habit-row">
+      <div class="habit-name">🏃 Exercise</div>
+      <div class="habit-dots">
+        <div class="habit-dot hd-blue">✓</div><div class="habit-dot hd-blue">✓</div>
+        <div class="habit-dot hd-blue">✓</div><div class="habit-dot hd-blue">✓</div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+      </div>
+      <div class="habit-streak">21🔥</div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name">📚 Reading</div>
+      <div class="habit-dots">
+        <div class="habit-dot hd-gold">✓</div><div class="habit-dot hd-gold">✓</div>
+        <div class="habit-dot hd-gold">✓</div><div class="habit-dot" onclick="toggleDot(this,'hd-gold')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-gold')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-gold')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-gold')"></div>
+      </div>
+      <div class="habit-streak">11🔥</div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name">🧘 Meditation</div>
+      <div class="habit-dots">
+        <div class="habit-dot hd-violet">✓</div><div class="habit-dot" onclick="toggleDot(this,'hd-violet')"></div>
+        <div class="habit-dot hd-violet">✓</div><div class="habit-dot hd-violet">✓</div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-violet')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-violet')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-violet')"></div>
+      </div>
+      <div class="habit-streak">4🔥</div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name">💧 Hydration</div>
+      <div class="habit-dots">
+        <div class="habit-dot hd-green">✓</div><div class="habit-dot hd-green">✓</div>
+        <div class="habit-dot hd-green">✓</div><div class="habit-dot" onclick="toggleDot(this,'hd-green')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-green')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-green')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-green')"></div>
+      </div>
+      <div class="habit-streak">14🔥</div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name">✍️ Journaling</div>
+      <div class="habit-dots">
+        <div class="habit-dot hd-blue">✓</div><div class="habit-dot hd-blue">✓</div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+        <div class="habit-dot" onclick="toggleDot(this,'hd-blue')"></div>
+      </div>
+      <div class="habit-streak">6🔥</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     FINANCE
+══════════════════════════════ -->
+<div class="page" id="page-finance">
+  <div class="page-header">
+    <div class="page-emoji">◆</div>
+    <div class="page-title">Finance Hub</div>
+    <div class="page-desc">Track every dollar, control your spending, and build toward financial independence.</div>
+  </div>
+
+  <!-- NET WORTH HERO -->
+  <div class="nw-card">
+    <div class="nw-label">📈 Estimated Net Worth</div>
+    <div class="nw-value">$124,500</div>
+    <div class="nw-delta">↑ +$3,200 this month &nbsp;·&nbsp; <span style="color:var(--t1);font-size:11px">+2.6% MoM</span></div>
+  </div>
+
+  <div class="g4 mb20">
+    <div class="stat"><div class="stat-label">Monthly Income</div><div class="stat-val green" style="font-size:20px">$6,400</div><div class="stat-delta">↑ This month</div></div>
+    <div class="stat"><div class="stat-label">Total Spent</div><div class="stat-val rose" style="font-size:20px">$2,050</div><div class="stat-delta neg">32% of income</div></div>
+    <div class="stat"><div class="stat-label">Saved</div><div class="stat-val gold" style="font-size:20px">$4,350</div><div class="stat-delta">68% rate</div></div>
+    <div class="stat"><div class="stat-label">Invested</div><div class="stat-val blue" style="font-size:20px">$2,800</div><div class="stat-delta">↑ Stocks + Index</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Monthly Spending Breakdown</span><span class="card-action">+ Add</span></div>
+
+      <!-- SVG Bar Chart -->
+      <div class="chart-wrap">
+        <svg width="100%" height="120" viewBox="0 0 320 120" preserveAspectRatio="none">
+          <!-- OCT -->
+          <rect x="4" y="60" width="32" height="52" rx="4" fill="rgba(91,115,255,.35)" class="chart-bar"/>
+          <!-- NOV -->
+          <rect x="52" y="44" width="32" height="68" rx="4" fill="rgba(91,115,255,.45)" class="chart-bar"/>
+          <!-- DEC -->
+          <rect x="100" y="30" width="32" height="82" rx="4" fill="rgba(91,115,255,.55)" class="chart-bar"/>
+          <!-- JAN -->
+          <rect x="148" y="50" width="32" height="62" rx="4" fill="rgba(91,115,255,.55)" class="chart-bar"/>
+          <!-- FEB -->
+          <rect x="196" y="70" width="32" height="42" rx="4" fill="rgba(91,115,255,.65)" class="chart-bar"/>
+          <!-- MAR -->
+          <rect x="244" y="40" width="32" height="72" rx="4" fill="#5b73ff" class="chart-bar"/>
+        </svg>
+        <div class="chart-label">
+          <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+        </div>
+      </div>
+
+      <!-- Spending Breakdown Bar -->
+      <div style="display:flex;gap:3px;height:7px;border-radius:6px;overflow:hidden;margin:14px 0 8px">
+        <div style="width:29%;background:var(--rose)"></div>
+        <div style="width:22%;background:var(--gold)"></div>
+        <div style="width:18%;background:var(--violet)"></div>
+        <div style="width:16%;background:var(--blue)"></div>
+        <div style="flex:1;background:var(--bg-4)"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:1px;background:var(--rose)"></div><span style="font-size:9.5px;color:var(--t2)">Housing</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:1px;background:var(--gold)"></div><span style="font-size:9.5px;color:var(--t2)">Food</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:1px;background:var(--violet)"></div><span style="font-size:9.5px;color:var(--t2)">Transport</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:1px;background:var(--blue)"></div><span style="font-size:9.5px;color:var(--t2)">Learning</span></div>
+      </div>
+
+      <div class="fin-row">
+        <div class="fin-cat"><div class="fin-dot" style="background:var(--rose)"></div><div><div class="fin-name">Housing & Utilities</div><div class="fin-sub">Rent, electricity, internet</div></div></div>
+        <div class="fin-amt exp">−$600</div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-cat"><div class="fin-dot" style="background:var(--gold)"></div><div><div class="fin-name">Food & Dining</div><div class="fin-sub">Groceries, restaurants</div></div></div>
+        <div class="fin-amt exp">−$450</div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-cat"><div class="fin-dot" style="background:var(--violet)"></div><div><div class="fin-name">Transport</div><div class="fin-sub">Fuel, transit, ride-share</div></div></div>
+        <div class="fin-amt exp">−$280</div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-cat"><div class="fin-dot" style="background:var(--blue)"></div><div><div class="fin-name">Learning & Subscriptions</div><div class="fin-sub">Courses, tools, books</div></div></div>
+        <div class="fin-amt exp">−$220</div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-cat"><div class="fin-dot" style="background:var(--t2)"></div><div><div class="fin-name">Miscellaneous</div><div class="fin-sub">Personal care, leisure</div></div></div>
+        <div class="fin-amt exp">−$500</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb16">
+        <div class="card-head"><span class="card-title">Savings Goals</span><span class="card-action">+ Goal</span></div>
+        <div class="prog-wrap">
+          <div class="prog-meta"><div class="prog-label">Emergency Fund — 6 months</div><div class="prog-pct">$19.2k / 64%</div></div>
+          <div class="prog-track"><div class="prog-fill pf-green" style="width:64%"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-meta"><div class="prog-label">Investment Portfolio Target</div><div class="prog-pct">$28k / 56%</div></div>
+          <div class="prog-track"><div class="prog-fill pf-blue" style="width:56%"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-meta"><div class="prog-label">Business / Opportunity Fund</div><div class="prog-pct">$12k / 24%</div></div>
+          <div class="prog-track"><div class="prog-fill pf-gold" style="width:24%"></div></div>
+        </div>
+        <div class="prog-wrap" style="margin-bottom:0">
+          <div class="prog-meta"><div class="prog-label">Travel Fund</div><div class="prog-pct">$3.5k / 70%</div></div>
+          <div class="prog-track"><div class="prog-fill pf-violet" style="width:70%"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Income Streams</span><span class="card-action">+ Add</span></div>
+        <div class="fin-row">
+          <div class="fin-cat"><div class="fin-dot" style="background:var(--green)"></div><div><div class="fin-name">Primary Salary</div><div class="fin-sub">Monthly · Stable</div></div></div>
+          <div class="fin-amt inc">+$5,000</div>
+        </div>
+        <div class="fin-row">
+          <div class="fin-cat"><div class="fin-dot" style="background:var(--blue)"></div><div><div class="fin-name">Freelance / Side Work</div><div class="fin-sub">Variable · Monthly</div></div></div>
+          <div class="fin-amt inc">+$1,000</div>
+        </div>
+        <div class="fin-row">
+          <div class="fin-cat"><div class="fin-dot" style="background:var(--violet)"></div><div><div class="fin-name">Investment Returns</div><div class="fin-sub">Dividends + gains</div></div></div>
+          <div class="fin-amt inc">+$400</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     JOURNAL
+══════════════════════════════ -->
+<div class="page" id="page-journal">
+  <div class="page-header">
+    <div class="page-emoji">✦</div>
+    <div class="page-title">Daily Journal</div>
+    <div class="page-desc">Reflect, process, and grow. Your private thinking space — no filters needed.</div>
+  </div>
+
+  <div class="g21">
+    <div>
+      <div class="card mb16">
+        <div class="card-head">
+          <span class="card-title">Today's Entry</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            <div style="display:flex;gap:4px">
+              <span style="font-size:14px;cursor:pointer;opacity:.5;transition:opacity .15s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">😔</span>
+              <span style="font-size:14px;cursor:pointer;opacity:.5;transition:opacity .15s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">😐</span>
+              <span style="font-size:14px;cursor:pointer;opacity:1">😌</span>
+              <span style="font-size:14px;cursor:pointer;opacity:.5;transition:opacity .15s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">😄</span>
+              <span style="font-size:14px;cursor:pointer;opacity:.5;transition:opacity .15s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">🔥</span>
+            </div>
+            <span class="card-action">Save</span>
+          </div>
+        </div>
+
+        <div class="doc-toolbar">
+          <span class="doc-btn">H1</span><span class="doc-btn">H2</span>
+          <span class="doc-btn"><b>B</b></span><span class="doc-btn"><i>I</i></span>
+          <span class="doc-btn">• List</span><span class="doc-btn">✓ Todo</span>
+          <span class="doc-btn">— Divider</span>
+        </div>
+
+        <div class="journal-section">
+          <div class="journal-label morning">🌅 Morning — Intentions & Gratitude</div>
+          <textarea class="capture-input" placeholder="What are your 3 intentions for today? What are you grateful for?" style="min-height:70px">My intentions: 1) Complete the weekly strategy review with full focus. 2) Protect deep work time — no distractions before noon. 3) End the day with energy left for reading.</textarea>
+        </div>
+
+        <div class="journal-section">
+          <div class="journal-label midday">☀️ Midday — Progress Check</div>
+          <textarea class="capture-input" placeholder="Quick check-in: energy level, what's going well, what needs attention?" style="min-height:60px">Energy is solid this morning. Finished the planning session ahead of schedule. One blocker: waiting on feedback before moving forward — using that time for reading instead.</textarea>
+        </div>
+
+        <div class="journal-section" style="margin-bottom:0">
+          <div class="journal-label evening">🌙 Evening — Review & Lessons</div>
+          <textarea class="capture-input" placeholder="What went well today? What would you do differently? Key lessons?" style="min-height:70px">Productive day overall. Could have started deep work earlier. Big win: stayed off social media until 6pm — focus was noticeably sharper.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Past Entries</span><span class="card-action">All →</span></div>
+        <div class="kb-item"><div class="kb-icon">✦</div><div><div class="kb-title">Yesterday — Weekly review completed</div><div class="kb-meta"><span>😌 Calm</span><span class="tag t-green">Productive</span></div></div></div>
+        <div class="kb-item"><div class="kb-icon">✦</div><div><div class="kb-title">2 days ago — Breakthrough on project</div><div class="kb-meta"><span>🔥 Energized</span><span class="tag t-blue">Work</span></div></div></div>
+        <div class="kb-item"><div class="kb-icon">✦</div><div><div class="kb-title">3 days ago — Reflection on habits</div><div class="kb-meta"><span>😐 Neutral</span><span class="tag t-gold">Personal</span></div></div></div>
+        <div class="kb-item"><div class="kb-icon">✦</div><div><div class="kb-title">Sunday — Monthly goal review</div><div class="kb-meta"><span>😄 Positive</span><span class="tag t-violet">Review</span></div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Gratitude · Today</span></div>
+        <div style="font-size:12.5px;color:var(--t1);line-height:2">
+          <div>🙏 Having the focus and energy to show up fully</div>
+          <div>🙏 Systems that make decisions easier</div>
+          <div>🙏 Progress, no matter how small</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Weekly Templates</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="tb-btn" style="text-align:left;cursor:pointer">📋 Weekly Review Template</div>
+          <div class="tb-btn" style="text-align:left;cursor:pointer">🌙 Monthly Retrospective</div>
+          <div class="tb-btn" style="text-align:left;cursor:pointer">🎯 Goal-Setting Session</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     SECOND BRAIN
+══════════════════════════════ -->
+<div class="page" id="page-brain">
+  <div class="page-header">
+    <div class="page-emoji">❋</div>
+    <div class="page-title">Second Brain</div>
+    <div class="page-desc">PARA method: Projects → Areas → Resources → Archive. Never lose a thought.</div>
+  </div>
+
+  <div class="g4 mb20">
+    <div class="stat"><div class="stat-label">Total Notes</div><div class="stat-val blue">84</div><div class="stat-delta">↑ 8 this week</div></div>
+    <div class="stat"><div class="stat-label">Project Notes</div><div class="stat-val">12</div><div class="stat-delta">Active projects</div></div>
+    <div class="stat"><div class="stat-label">Ideas Captured</div><div class="stat-val gold">31</div><div class="stat-delta">In idea bank</div></div>
+    <div class="stat"><div class="stat-label">Archived</div><div class="stat-val green">41</div><div class="stat-delta">Reference store</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">📁 Projects — Active Notes</span><span class="card-action">+ New Note</span></div>
+      <div class="kb-item"><div class="kb-icon">🚀</div><div><div class="kb-title">Product Launch — Messaging Framework</div><div class="kb-meta"><span>Updated today</span><span class="tag t-blue">Work</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">📊</div><div><div class="kb-title">Q2 Strategy — OKR Draft</div><div class="kb-meta"><span>Yesterday</span><span class="tag t-gold">Strategy</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">🎨</div><div><div class="kb-title">Brand Guidelines — Typography Notes</div><div class="kb-meta"><span>2 days ago</span><span class="tag t-violet">Design</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">💰</div><div><div class="kb-title">FI Plan — Net Worth Calculation</div><div class="kb-meta"><span>3 days ago</span><span class="tag t-green">Finance</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">💡 Idea Bank</span><span class="card-action">+ Capture</span></div>
+      <div class="kb-item"><div class="kb-icon">💡</div><div><div class="kb-title">AI-powered personal weekly digest tool</div><div class="kb-meta"><span>This week</span><span class="tag t-violet">Product</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">💡</div><div><div class="kb-title">Gamify habit streaks with milestone rewards</div><div class="kb-meta"><span>Mar 22</span><span class="tag t-blue">App Idea</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">💡</div><div><div class="kb-title">Create a "done list" alongside to-do list</div><div class="kb-meta"><span>Mar 20</span><span class="tag t-gold">Productivity</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">💡</div><div><div class="kb-title">Monthly "analog day" — no screens at all</div><div class="kb-meta"><span>Mar 15</span><span class="tag t-green">Wellness</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">🌐 Areas — Ongoing References</span><span class="card-action">+ Add</span></div>
+      <div class="kb-item"><div class="kb-icon">🏋️</div><div><div class="kb-title">Health & Fitness Protocol</div><div class="kb-meta"><span>Ongoing</span><span class="tag t-green">Wellness</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">📈</div><div><div class="kb-title">Investment Philosophy & Rules</div><div class="kb-meta"><span>Ongoing</span><span class="tag t-gold">Finance</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">🎯</div><div><div class="kb-title">Career Development Framework</div><div class="kb-meta"><span>Ongoing</span><span class="tag t-blue">Career</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">🤝</div><div><div class="kb-title">Relationship & Network CRM</div><div class="kb-meta"><span>Ongoing</span><span class="tag t-violet">People</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">📦 Archive — Reference Store</span><span class="card-action">Browse →</span></div>
+      <div class="kb-item"><div class="kb-icon">📄</div><div><div class="kb-title">2025 Annual Review</div><div class="kb-meta"><span>Dec 2025</span><span class="tag t-green">Annual</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">📄</div><div><div class="kb-title">Q4 2025 Retrospective</div><div class="kb-meta"><span>Nov 2025</span><span class="tag t-blue">Quarterly</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">📄</div><div><div class="kb-title">Old Project Notes — Completed</div><div class="kb-meta"><span>Oct 2025</span><span class="tag t-gold">Archive</span></div></div></div>
+      <div class="kb-item"><div class="kb-icon">📄</div><div><div class="kb-title">Learning Journal — 2025</div><div class="kb-meta"><span>Jan–Dec 2025</span><span class="tag t-violet">Learning</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     RESOURCES
+══════════════════════════════ -->
+<div class="page" id="page-resources">
+  <div class="page-header">
+    <div class="page-emoji">◩</div>
+    <div class="page-title">Resources</div>
+    <div class="page-desc">Books, articles, courses, and links — curated and always accessible.</div>
+  </div>
+
+  <div class="pill-tabs">
+    <div class="pill-tab active">All</div>
+    <div class="pill-tab">Books</div>
+    <div class="pill-tab">Articles</div>
+    <div class="pill-tab">Courses</div>
+    <div class="pill-tab">Videos</div>
+  </div>
+
+  <div class="g12">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Reading Queue</span><span class="card-action">+ Add Book</span></div>
+
+      <div class="read-item">
+        <div class="read-spine" style="background:rgba(91,115,255,.15);color:var(--blue);font-size:22px">📘</div>
+        <div class="read-body">
+          <div class="read-title">Atomic Habits</div>
+          <div class="read-author">James Clear · Self-Development</div>
+          <div class="prog-track" style="height:4px"><div class="prog-fill pf-blue" style="width:100%"></div></div>
+          <div class="read-status" style="color:var(--green)">✓ Completed — Key notes saved</div>
+        </div>
+      </div>
+
+      <div class="read-item">
+        <div class="read-spine" style="background:rgba(240,192,64,.1);color:var(--gold);font-size:22px">📙</div>
+        <div class="read-body">
+          <div class="read-title">The Psychology of Money</div>
+          <div class="read-author">Morgan Housel · Finance</div>
+          <div class="prog-track" style="height:4px"><div class="prog-fill pf-gold" style="width:68%"></div></div>
+          <div class="read-status"><span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--gold)">68% · Currently Reading</span></div>
+        </div>
+      </div>
+
+      <div class="read-item">
+        <div class="read-spine" style="background:rgba(192,132,252,.1);color:var(--violet);font-size:22px">📕</div>
+        <div class="read-body">
+          <div class="read-title">Deep Work</div>
+          <div class="read-author">Cal Newport · Productivity</div>
+          <div class="prog-track" style="height:4px"><div class="prog-fill pf-violet" style="width:0%"></div></div>
+          <div class="read-status">⏳ Up next in queue</div>
+        </div>
+      </div>
+
+      <div class="read-item">
+        <div class="read-spine" style="background:rgba(52,211,153,.08);color:var(--green);font-size:22px">📗</div>
+        <div class="read-body">
+          <div class="read-title">$100M Offers</div>
+          <div class="read-author">Alex Hormozi · Business</div>
+          <div class="prog-track" style="height:4px"><div class="prog-fill pf-green" style="width:0%"></div></div>
+          <div class="read-status">📋 Queued — Q2 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Saved Articles</span><span class="card-action">+ Save Link</span></div>
+        <div class="kb-item"><div class="kb-icon">🔗</div><div><div class="kb-title">How compounding applies to skills, not just money</div><div class="kb-meta"><span>Newsletter</span><span class="tag t-gold">Mindset</span></div></div></div>
+        <div class="kb-item"><div class="kb-icon">🔗</div><div><div class="kb-title">The 80/20 rule applied to personal finance</div><div class="kb-meta"><span>Blog</span><span class="tag t-green">Finance</span></div></div></div>
+        <div class="kb-item"><div class="kb-icon">🔗</div><div><div class="kb-title">Why consistency beats intensity every time</div><div class="kb-meta"><span>Substack</span><span class="tag t-blue">Habits</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Active Courses</span><span class="card-action">+ Add</span></div>
+        <div class="prog-wrap">
+          <div class="prog-meta"><div class="prog-label">System Design Fundamentals</div><div class="prog-pct">52%</div></div>
+          <div class="prog-track"><div class="prog-fill pf-blue" style="width:52%"></div></div>
+        </div>
+        <div class="prog-wrap" style="margin-bottom:0">
+          <div class="prog-meta"><div class="prog-label">Financial Modeling Basics</div><div class="prog-pct">31%</div></div>
+          <div class="prog-track"><div class="prog-fill pf-gold" style="width:31%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+const pages = {
+  dashboard:'Dashboard', capture:'Quick Capture', tasks:'Tasks',
+  projects:'Projects', goals:'Goals & OKRs', habits:'Habits',
+  finance:'Finance', journal:'Journal', brain:'Second Brain', resources:'Resources'
+};
+
+function goPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const p = document.getElementById('page-' + id);
+  if (p) p.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('crumb-cur').textContent = pages[id] || id;
+  // Animate progress bars on view
+  setTimeout(() => {
+    p.querySelectorAll('.prog-fill').forEach(b => {
+      const w = b.style.width;
+      b.style.transition = 'none';
+      b.style.width = '0';
+      setTimeout(() => { b.style.transition = ''; b.style.width = w; }, 30);
+    });
+  }, 50);
+}
+
+/* ═══════════════════════════════════════════
+   TASK TOGGLE
+═══════════════════════════════════════════ */
+function toggleTask(item) {
+  const cb = item.querySelector('.task-cb');
+  const tx = item.querySelector('.task-text');
+  if (cb.classList.contains('done')) {
+    cb.classList.remove('done'); cb.textContent = '';
+    tx.classList.remove('done');
+  } else {
+    cb.classList.add('done'); cb.textContent = '✓';
+    tx.classList.add('done');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   HABIT DOT TOGGLE
+═══════════════════════════════════════════ */
+function toggleDot(dot, cls) {
+  if (dot.classList.contains(cls)) {
+    dot.className = 'habit-dot'; dot.textContent = '';
+  } else {
+    dot.className = 'habit-dot ' + cls; dot.textContent = '✓';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   PILL TABS
+═══════════════════════════════════════════ */
+document.querySelectorAll('.pill-tabs').forEach(tabs => {
+  tabs.querySelectorAll('.pill-tab').forEach(tab => {
+    tab.onclick = () => {
+      tabs.querySelectorAll('.pill-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    };
+  });
+});
+
+/* ═══════════════════════════════════════════
+   CHIPS
+═══════════════════════════════════════════ */
+document.querySelectorAll('.welcome-chips').forEach(c => {
+  c.querySelectorAll('.chip').forEach(ch => {
+    ch.onclick = () => {
+      c.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+      ch.classList.add('active');
+    };
+  });
+});
+
+/* ═══════════════════════════════════════════
+   DATE & WEEK STRIP
+═══════════════════════════════════════════ */
+(function() {
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('today-date').textContent =
+    days[now.getDay()] + ' · ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
+  const strip = document.getElementById('week-strip');
+  const shortDays = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Start Monday
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    const isToday = d.toDateString() === now.toDateString();
+    const div = document.createElement('div');
+    div.className = 'wday' + (isToday ? ' today' : '');
+    div.innerHTML = `<div class="wday-n">${shortDays[d.getDay()]}</div><div class="wday-d">${d.getDate()}</div>${[1,3,4].includes(i) ? '<div class="wday-dot"></div>' : ''}`;
+    strip.appendChild(div);
+  }
+})();
+
+/* ═══════════════════════════════════════════
+   MINI CALENDAR
+═══════════════════════════════════════════ */
+(function() {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month').textContent = months[m] + ' ' + y;
+
+  const grid = document.getElementById('cal-grid');
+  const days = ['S','M','T','W','T','F','S'];
+  days.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-dow'; el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const eventDays = [4, 7, 11, 15, 18, 21, 25, 28];
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    let cls = 'cal-day';
+    if (d === now.getDate()) cls += ' today';
+    if (eventDays.includes(d)) cls += ' has-event';
+    el.className = cls; el.textContent = d;
+    grid.appendChild(el);
+  }
+})();
+
+/* ═══════════════════════════════════════════
+   POMODORO TIMER
+═══════════════════════════════════════════ */
+let timerInt = null, timeLeft = 25*60, running = false, onBreak = false, sessions = 0;
+const CIRCUM = 2 * Math.PI * 44;
+
+function updateRing() {
+  const total = onBreak ? 5*60 : 25*60;
+  const elapsed = total - timeLeft;
+  const prog = elapsed / total;
+  const offset = CIRCUM * (1 - prog);
+  const ring = document.getElementById('timer-ring');
+  if (ring) {
+    ring.style.strokeDasharray = CIRCUM;
+    ring.style.strokeDashoffset = offset;
+  }
+}
+
+function updateDisplay() {
+  const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+  const s = (timeLeft%60).toString().padStart(2,'0');
+  document.getElementById('timer-display').textContent = m + ':' + s;
+  updateRing();
+}
+
+function startTimer() {
+  const btn = document.getElementById('timer-btn');
+  const ring = document.getElementById('timer-ring');
+  if (running) {
+    clearInterval(timerInt); running = false;
+    btn.textContent = 'Resume';
+  } else {
+    running = true;
+    btn.textContent = 'Pause';
+    if (ring) ring.className = onBreak ? 'pomo-ring-fg break-mode' : 'pomo-ring-fg';
+    timerInt = setInterval(() => {
+      timeLeft--;
+      updateDisplay();
+      if (timeLeft <= 0) {
+        clearInterval(timerInt); running = false;
+        if (!onBreak) {
+          sessions++;
+          document.getElementById('sessions-count').textContent = sessions;
+          onBreak = true; timeLeft = 5*60;
+          document.getElementById('timer-mode').textContent = '☕ Break Time — Recharge';
+          btn.textContent = 'Start Break';
+          if (ring) ring.className = 'pomo-ring-fg break-mode';
+        } else {
+          onBreak = false; timeLeft = 25*60;
+          document.getElementById('timer-mode').textContent = '🎯 Focus Session';
+          btn.textContent = 'Start Focus';
+          if (ring) ring.className = 'pomo-ring-fg';
+        }
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInt); running = false; onBreak = false; timeLeft = 25*60;
+  document.getElementById('timer-btn').textContent = 'Start Focus';
+  document.getElementById('timer-mode').textContent = '🎯 Focus Session';
+  updateDisplay();
+}
+
+// Init ring
+document.addEventListener('DOMContentLoaded', () => {
+  const r = document.getElementById('timer-ring');
+  if (r) { r.style.strokeDasharray = CIRCUM; r.style.strokeDashoffset = 0; }
+});
+
+/* ═══════════════════════════════════════════
+   CONTRIBUTION HEATMAP
+═══════════════════════════════════════════ */
+(function() {
+  const container = document.getElementById('heatmap-container');
+  if (!container) return;
+  const levels = [0,1,2,3,4];
+  const sample = [0,1,0,2,1,3,4,3,2,1,0,1,2,3,2,4,3,2,1,0,1,2,1,3,4,3,2,1,0,1,2,3,2,1,0,2,3,4,3,2,1,0,1,2,3,4,3,2,1,0,1,2,3,2,1,0,1,2,3,4,3,2,1,0,1,2,3,2,1,3,4,3,2,1,0,1,2,3,4,3,2,1,0,1,2,3,2,1,0,1,3];
+  const monthLabels = document.createElement('div');
+  monthLabels.style.cssText = 'display:flex;font-size:9px;color:var(--t2);font-family:Space Mono,monospace;margin-bottom:5px;padding-left:0;gap:0';
+  const mns = ['Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+  mns.forEach(mn => {
+    const s = document.createElement('span');
+    s.textContent = mn;
+    s.style.cssText = 'flex:1;text-align:left;';
+    monthLabels.appendChild(s);
+  });
+  container.appendChild(monthLabels);
+  const grid = document.createElement('div');
+  grid.className = 'heatmap-grid';
+  for (let i = 0; i < 91; i++) {
+    const cell = document.createElement('div');
+    const lvl = sample[i % sample.length];
+    cell.className = 'hm-cell hm-' + lvl;
+    cell.title = 'Day ' + (i+1) + ': ' + ['No activity','Light','Moderate','Active','Peak'][lvl];
+    grid.appendChild(cell);
+  }
+  container.appendChild(grid);
+})();
+
+/* ═══════════════════════════════════════════
+   PROGRESS BAR ANIMATE ON LOAD
+═══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.prog-fill').forEach(b => {
+      const w = b.style.width;
+      b.style.transition = 'none'; b.style.width = '0';
+      setTimeout(() => { b.style.transition = ''; b.style.width = w; }, 80);
+    });
+  }, 300);
+});
+</script>
+</body>
+</html>
